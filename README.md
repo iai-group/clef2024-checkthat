@@ -7,7 +7,8 @@ This repo contains the code and data for the CLEF 2024 CheckThat! task1 IAI part
 * data
   * task1 - Contains data for task1 which is also uploaded to HuggingFace framework.
     * The dataset is currently gated/private, make sure you have run huggingface-cli login
-    * Usage: ```
+    * Usage: 
+    ```
         from datasets import load_dataset
         # English data containing political debates.
         dataset_en = load_dataset("iai-group/clef2024_checkthat_task1_en")
