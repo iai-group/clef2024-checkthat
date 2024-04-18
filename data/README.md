@@ -1,3 +1,9 @@
 # Data
 
-This folder should contain the description of data that was used in the project, including datasets, queries, ground truth, run files, etc.  Files under 10MB can be stored on GitHub, larger files should be stored on a server (e.g., gustav1).  This README should provide a comprehensive overview of all the data that is used and where it originates from (e.g., part of an official test collection, generated using code in this repo or a third-party tool, etc.).
+task1 data is under the folder `task1`. It also contains code to load and prepare the HuggingFace data. It is already uploaded to the Hugginface framework:
+*  English data: `iai-group/clef2024_checkthat_task1_en`
+*  Spanish data: `iai-group/clef2024_checkthat_task1_es`
+*  Dutch data: `iai-group/clef2024_checkthat_task1_nl`
+*  Arabic data: `iai-group/clef2024_checkthat_task1_ar`
+
+This data is provided by the [CLEF 2024 CheckThat organizers](https://gitlab.com/checkthat_lab/clef2024-checkthat-lab/-/tree/main/task1?ref_type=heads)

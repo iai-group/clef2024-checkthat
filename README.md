@@ -1,12 +1,21 @@
-# IAI Project Template
+# CLEF 2024 CheckThat! task1 IAI participation.
 
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+This repo contains the code and data for the CLEF 2024 CheckThat! task1 IAI participation.
 
-This repository serves as a template for software projects.
-
-# Testing and GitHub actions
-
-Using `pre-commit` hooks, `flake8`, `black`, `mypy`, `docformatter`, and `pytest` are locally run on every commit. For more details on how to use `pre-commit` hooks see [here](https://github.com/iai-group/guidelines/tree/main/python#install-pre-commit-hooks).
-
-Similarly, Github actions are used to run `flake8`, `black` and `pytest` on every push and pull request. The `pytest` results are sent to [CodeCov](https://about.codecov.io/) using their API for to get test coverage analysis. Details on Github actions are [here](https://github.com/iai-group/guidelines/blob/main/github/Actions.md).
-
+## Folders
+* checkthat - python module for the claim detection.
+* data
+  * task1 - Contains data for task1 which is also uploaded to HuggingFace framework.
+    * The dataset is currently gated/private, make sure you have run huggingface-cli login
+    * Usage: 
+    ```
+        from datasets import load_dataset
+        # English data containing political debates.
+        dataset_en = load_dataset("iai-group/clef2024_checkthat_task1_en")
+        # Spanish data containing Tweets.
+        dataset_es = load_dataset("iai-group/clef2024_checkthat_task1_es")
+        # Dutch data containing Tweets.
+        dataset_nl = load_dataset("iai-group/clef2024_checkthat_task1_nl")
+        # Arabic data containing Tweets.
+        dataset_ar = load_dataset("iai-group/clef2024_checkthat_task1_ar")
+    ```
