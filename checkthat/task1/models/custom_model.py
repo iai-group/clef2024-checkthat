@@ -5,7 +5,7 @@ from transformers import AutoModelForSequenceClassification
 
 
 class CustomModel(Model):
-    def __init__(self, model_name: str, num_labels: int):
+    def __init__(self, model_name: str, num_labels: int, device: str):
         """Constructor for the CustomModel class.
 
         Args:
@@ -13,6 +13,8 @@ class CustomModel(Model):
             num_labels (int): Number of labels in the dataset
         """
         super(CustomModel, self).__init__()
+        if device is not None:
+            self.to(device)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             model_name, num_labels=num_labels
         )

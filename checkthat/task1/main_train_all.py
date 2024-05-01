@@ -1,8 +1,8 @@
 """Main training script for training on all languages."""
 from datasets import load_dataset
 from tokenization.normalize_DatasetDict_featues import rename_features
-from transformers import AutoTokenizer
 from training_scripts.training import run_training
+from transformers import AutoTokenizer
 
 
 def main():
@@ -23,15 +23,24 @@ def main():
 
     tokenizer = AutoTokenizer.from_pretrained(model_name_en)
 
-    for seed, dataset in zip(seeds, dataset_list):
-        dataset = load_dataset(dataset)
-        # Normalize dataset features if not already normalized (intended for twitter dataset)
-        if dataset["train"]["tweet_text"]:
-            dataset = rename_features(dataset)
-            tokenizer = AutoTokenizer.from_pretrained(multilingual_model)
-
-        run_training(seed, dataset, model_name_en, tokenizer, label_map)
+    for dataset in dataset_list:
+        for seed in seeds:
+            dataset = load_dataset(dataset)
+            # Normalize dataset features if not already normalized (intended for twitter dataset)
+            if "tweet_text" in dataset["train"].column_names:
+                dataset = rename_features(dataset)
+                tokenizer = AutoTokenizer.from_pretrained(multilingual_model)
+                run_training(seed, dataset, multilingual_model, tokenizer, label_map)
+            else:
+                run_training(seed, dataset, model_name_en, tokenizer, label_map)
 
 
 if __name__ == "__main__":
+    import torch
+
+    print(torch.cuda.is_available())
+    print(torch.cuda.current_device())
+    print(torch.cuda.device(0))
+    print(torch.cuda.device_count())
+    print(torch.cuda.get_device_name(0))
     main()

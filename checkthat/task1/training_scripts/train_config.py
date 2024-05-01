@@ -14,6 +14,6 @@ def load_config(file_path):
 def get_training_arguments():
     """Unpack training arguments from the config file and return as a
     TrainingArguments object."""
-    config = load_config("training_config.yaml")
+    config = load_config("checkthat/task1/training_config.yaml")
     training_args = config["training_arguments"]
     return TrainingArguments(**training_args)

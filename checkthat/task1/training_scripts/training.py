@@ -4,14 +4,18 @@ This script trains the model for a single seed.
 """
 import wandb
 from transformers import Trainer, EarlyStoppingCallback
-from checkthat.task1.tokenization.tokenizer import TextDataset
-from checkthat.task1.models.custom_model import CustomModel
-from checkthat.task1.metrics.compute_metrics import compute_metrics
-from checkthat.task1.training_scripts.train_config import get_training_arguments
+from tokenization.tokenizer import TextDataset
+from models.custom_model import CustomModel
+from metrics.compute_metrics import compute_metrics
+from training_scripts.train_config import get_training_arguments
 import random
 import numpy as np
 import torch
-
+import os
+import torch.cuda
+import torch
+torch.backends.cuda.matmul.allow_tf32 = True
+torch.backends.cudnn.allow_tf32 = True
 
 def set_seed(seed):
     """Set seed for reproducibility."""
@@ -54,11 +58,10 @@ def run_training(seed, dataset, model_name, tokenizer, label_map):
 
     # Creating a Trainer instance with training arguments and datasets
     trainer = Trainer(
-        model=CustomModel(model_name, num_labels=len(label_map)),
+        model=CustomModel(model_name, num_labels=len(label_map), device='cuda'),
         args=training_arguments,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        test_dataset=test_dataset,
         compute_metrics=compute_metrics,
         callbacks=[
             EarlyStoppingCallback(early_stopping_patience=3)
