@@ -14,8 +14,8 @@ def main():
     ]
     label_map = {"No": 0, "Yes": 1}
 
-    model_name_en = "distilbert/distilroberta-base"
-    multilingual_model = "FacebookAI/xlm-roberta-base"
+    model_name_en = "FacebookAI/roberta-large"
+    multilingual_model = "FacebookAI/xlm-roberta-large"
     seeds = [42, 81, 1024, 6, 10]
     tokenizer = AutoTokenizer.from_pretrained(model_name_en)
 
@@ -26,11 +26,10 @@ def main():
                 dataset = rename_features(dataset)
                 tokenizer = AutoTokenizer.from_pretrained(multilingual_model)
                 training_args = get_training_arguments(multilingual_model, seed, dataset_name)
-                # run training with these arguments
+                run_training(seed, dataset, model_name_en, tokenizer, label_map, training_args)
             else:
                 training_args = get_training_arguments(model_name_en, seed, dataset_name)
                 run_training(seed, dataset, model_name_en, tokenizer, label_map, training_args)
-                # run training with these arguments
 
 if __name__ == "__main__":
     import torch
