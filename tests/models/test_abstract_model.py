@@ -1,8 +1,7 @@
 """Tests for the transformer model."""
-
 import pytest
 import torch
-from checkthat.task1.models.transformer_model import Model
+from checkthat.task1.models.abstract_model import Model
 
 
 class ConcreteModel(Model):
@@ -14,9 +13,6 @@ class ConcreteModel(Model):
         This method takes an input tensor and returns an output tensor where
         each element is doubled.
 
-        Args:
-            x (torch.Tensor): Input tensor.
-
         Returns:
             torch.Tensor: Output tensor, where each element is doubled.
         """
@@ -24,11 +20,7 @@ class ConcreteModel(Model):
 
 
 def test_model_cannot_be_instantiated():
-    """Test if the Model class cannot be instantiated.
-
-    This test checks whether attempting to instantiate the abstract
-    Model class raises a TypeError, as expected for abstract classes.
-    """
+    """Test if the Model class cannot be instantiated."""
     with pytest.raises(TypeError):
         Model()  # Directly test instantiation without assignment
 
