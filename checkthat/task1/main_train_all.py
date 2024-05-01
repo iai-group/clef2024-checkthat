@@ -3,37 +3,34 @@ from datasets import load_dataset
 from tokenization.normalize_DatasetDict_featues import rename_features
 from training_scripts.training import run_training
 from transformers import AutoTokenizer
-
+from training_scripts.train_config import get_training_arguments
 
 def main():
-    en, ar, es, nl = (
+    dataset_list = [
         "iai-group/clef2024_checkthat_task1_en",
         "iai-group/clef2024_checkthat_task1_ar",
         "iai-group/clef2024_checkthat_task1_es",
         "iai-group/clef2024_checkthat_task1_nl",
-    )
+    ]
+    label_map = {"No": 0, "Yes": 1}
 
-    dataset_list = [en, ar, es, nl]
-    label_map = {"No": 0, "Yes": 1}  # Label map for the dataset
-
-    model_name_en = "FacebookAI/roberta-large"
-    multilingual_model = "FacebookAI/xlm-roberta-large"
-
-    seeds = [42, 81, 1024, 6, 10]  # Seeds for reproducibility
-
+    model_name_en = "distilbert/distilroberta-base"
+    multilingual_model = "FacebookAI/xlm-roberta-base"
+    seeds = [42, 81, 1024, 6, 10]
     tokenizer = AutoTokenizer.from_pretrained(model_name_en)
 
-    for dataset in dataset_list:
+    for dataset_name in dataset_list:
         for seed in seeds:
-            dataset = load_dataset(dataset)
-            # Normalize dataset features if not already normalized (intended for twitter dataset)
+            dataset = load_dataset(dataset_name)
             if "tweet_text" in dataset["train"].column_names:
                 dataset = rename_features(dataset)
                 tokenizer = AutoTokenizer.from_pretrained(multilingual_model)
-                run_training(seed, dataset, multilingual_model, tokenizer, label_map)
+                training_args = get_training_arguments(multilingual_model, seed, dataset_name)
+                # run training with these arguments
             else:
-                run_training(seed, dataset, model_name_en, tokenizer, label_map)
-
+                training_args = get_training_arguments(model_name_en, seed, dataset_name)
+                run_training(seed, dataset, model_name_en, tokenizer, label_map, training_args)
+                # run training with these arguments
 
 if __name__ == "__main__":
     import torch

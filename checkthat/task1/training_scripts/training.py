@@ -26,7 +26,7 @@ def set_seed(seed):
         torch.cuda.manual_seed_all(seed)
 
 
-def run_training(seed, dataset, model_name, tokenizer, label_map):
+def run_training(seed, dataset, model_name, tokenizer, label_map, training_arguments):
     """Start training the model for a single seed.
 
     Args:
@@ -44,14 +44,14 @@ def run_training(seed, dataset, model_name, tokenizer, label_map):
         entity="aarnes",
         name=run_name,
         config={"seed": seed},
-    )
+    )   
 
     # Prepare datasets
     train_dataset = TextDataset(dataset["train"], tokenizer, label_map)
     eval_dataset = TextDataset(dataset["validation"], tokenizer, label_map)
     test_dataset = TextDataset(dataset["test"], tokenizer, label_map)
 
-    training_arguments = get_training_arguments()
+    # training_arguments = get_training_arguments()
     training_arguments.run_name = (
         run_name  # Optional, sync the name with Trainer's internal wandb run
     )
