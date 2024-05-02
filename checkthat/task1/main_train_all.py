@@ -4,8 +4,6 @@ from tokenization.normalize_DatasetDict_featues import rename_features
 from training_scripts.training import run_training
 from transformers import AutoTokenizer
 from training_scripts.train_config import get_training_arguments
-from test_scripts.load_from_checkpoints import find_latest_checkpoint
-from test_scripts.run_tests import run_prediction
 
 def main():
     dataset_list = [
