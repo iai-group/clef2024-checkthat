@@ -8,6 +8,7 @@ from tokenization.tokenizer import TextDataset
 from models.custom_model import CustomModel
 from metrics.compute_metrics import compute_metrics
 from training_scripts.train_config import get_training_arguments
+from training_scripts.train_config import get_language
 import random
 import numpy as np
 import torch
@@ -26,7 +27,7 @@ def set_seed(seed):
         torch.cuda.manual_seed_all(seed)
 
 
-def run_training(seed, dataset, model_name, tokenizer, label_map, training_arguments):
+def run_training(seed, dataset, model_name, tokenizer, label_map, training_arguments, dataset_language):
     """Start training the model for a single seed.
 
     Args:
@@ -38,7 +39,7 @@ def run_training(seed, dataset, model_name, tokenizer, label_map, training_argum
     """
     # Initialize wandb run
     set_seed(seed)
-    run_name = f"{model_name}_{seed}"
+    run_name = f"{model_name}_{seed}_{dataset_language}"
     wandb.init(
         project="Clef2024",
         entity="aarnes",
