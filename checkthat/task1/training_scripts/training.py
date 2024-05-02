@@ -25,20 +25,19 @@ def set_seed(seed):
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
 
-
-def run_training(seed, dataset, model_name, tokenizer, label_map, training_arguments, dataset_language):
+def run_training(seed, dataset, model, tokenizer, label_map, training_arguments, dataset_language):
     """Start training the model for a single seed.
 
     Args:
         seed: seed for reproducibility
         dataset: dataset dictionary containing train and validation splits
-        model_name: huggingface model name
+        model: huggingface model name
         tokenizer: huggerface tokenizer/same as model name
         label_map: dictionary mapping labels to integers
     """
     # Initialize wandb run
     set_seed(seed)
-    run_name = f"{model_name}_{seed}_{dataset_language}"
+    run_name = f"{model}_{seed}_{dataset_language}"
     wandb.init(
         project="Clef2024",
         entity="aarnes",
@@ -57,11 +56,11 @@ def run_training(seed, dataset, model_name, tokenizer, label_map, training_argum
 
     # Creating a Trainer instance with training arguments and datasets
     trainer = Trainer(
-        model=CustomModel(model_name, num_labels=len(label_map), device='cuda'),
+        model=CustomModel(model, num_labels=len(label_map), device='cuda'),
         args=training_arguments,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        compute_metrics=compute_metrics,
+        compute_metrics=compute_metrics(),
         callbacks=[
             EarlyStoppingCallback(early_stopping_patience=3)
         ],  # Early stopping callback

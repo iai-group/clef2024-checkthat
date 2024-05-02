@@ -5,7 +5,7 @@ training_arguments:
   # eval_steps: 500
   # evaluation_strategy: 'steps'    # evaluate after some number of steps
   output_dir: './results'          # output directory
-  save_total_limit: 5             # number of maximum checkpoints to save
+  save_total_limit: 3             # number of maximum checkpoints to save
   num_train_epochs: 100             # number of training epochs
   per_device_train_batch_size: 16 # batch size for training
   per_device_eval_batch_size: 16  # batch size for evaluation
@@ -16,4 +16,3 @@ training_arguments:
   load_best_model_at_end: True
   metric_for_best_model: "f1"     # metric to use for saving best model
   report_to: 'wandb'               # report to wandb
-

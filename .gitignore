@@ -130,3 +130,6 @@ dmypy.json
 
 # Exclude .DS_Store files everywhere
 *.DS_Store
+
+# Exclude node_modules
+.vscode/
