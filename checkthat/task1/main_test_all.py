@@ -2,9 +2,9 @@ import os
 import torch
 import pandas as pd
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
-from task1.models.custom_model import CustomModel
-from task1.tokenization.tokenizer import TextDataset
-from task1.metrics.compute_metrics import compute_metrics
+from models.custom_model import CustomModel
+from tokenization.tokenizer import TextDataset
+from metrics.compute_metrics import compute_metrics
 import wandb
 from tokenization.tokenizer import TextDataset
 
@@ -112,5 +112,5 @@ if __name__ == "__main__":
         tokenized_data = TextDataset(dataset_list.values()[i], tokenizer, label_map)
         run_prediction(model_name, dataset_list, tokenizer, checkpoint_path, has_labels=True)
         i += 1
-        
+
     
