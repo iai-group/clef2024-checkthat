@@ -4,8 +4,8 @@ from tokenization.normalize_DatasetDict_featues import rename_features
 from training_scripts.training import run_training
 from transformers import AutoTokenizer
 from training_scripts.train_config import get_training_arguments
-from test_scripts.load_from_checkpoints import load_model_from_dir
-from test_scripts.run_tests import run_testing
+from test_scripts.load_from_checkpoints import find_latest_checkpoint
+from test_scripts.run_tests import run_prediction
 
 def main():
     dataset_list = [
@@ -34,22 +34,6 @@ def main():
                 training_args = get_training_arguments(model_name_en, seed, dataset_name)
                 run_training(seed, dataset, model_name_en, tokenizer, label_map, training_args)
 
-
-
-    """Testing model on testset"""
-    base_dir = "./results"
-    models = load_model_from_dir(base_dir)
-    for model_name, model in models.items():
-        i += 1 # Incrementing i to get the model name for each model
-        for dataset_name in dataset_list:
-            dataset = load_dataset(dataset_name)
-            if "tweet_text" in dataset["test"].column_names:
-                dataset = rename_features(dataset)
-                tokenizer = AutoTokenizer.from_pretrained(multilingual_model)
-                run_testing(model, dataset, tokenizer, label_map)
-            else:
-                tokenizer = AutoTokenizer.from_pretrained(model_name)
-                run_testing(model, dataset, tokenizer, label_map, model.keys()[i]) # model.keys()[i] to get the model name
 
 if __name__ == "__main__":
     import torch

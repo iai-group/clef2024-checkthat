@@ -1,16 +1,16 @@
-"""Tokenizer for the task1 datasets."""
 import torch
 from torch.utils.data import Dataset
 
-
 class TextDataset(Dataset):
-    """Takes a list of dictionaries containing text and class labels.
+    """Takes a list of dictionaries containing text and optionally class labels.
 
     Args:
-        Dataset: Dataset class from torch.utils.data
+        data (list): A list of dictionaries with keys 'Text' and optionally 'class_label'.
+        tokenizer: Tokenizer instance for text processing.
+        label_map (dict, optional): A dictionary mapping class labels to integers. None if unlabeled.
     """
 
-    def __init__(self, data, tokenizer, label_map):
+    def __init__(self, data, tokenizer, label_map=None):
         """Initialize the TextDataset class."""
         self.data = data
         self.tokenizer = tokenizer
@@ -21,8 +21,8 @@ class TextDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        """Tokenize the text and return a dictionary containing the
-        tokenized."""
+        """Tokenize the text and return a dictionary containing the tokenized data.
+        If labels are present, include them, otherwise only return inputs."""
         item = self.data[idx]
         encoded = self.tokenizer.encode_plus(
             item["Text"],
@@ -33,9 +33,13 @@ class TextDataset(Dataset):
             return_tensors="pt",
         )
 
-        label_id = self.label_map[item["class_label"]]
-        return {
+        result = {
             "input_ids": encoded["input_ids"].squeeze(0),
             "attention_mask": encoded["attention_mask"].squeeze(0),
-            "labels": torch.tensor(label_id),
         }
+
+        if 'class_label' in item and self.label_map is not None:
+            label_id = self.label_map[item["class_label"]]
+            result["labels"] = torch.tensor(label_id)
+
+        return result
