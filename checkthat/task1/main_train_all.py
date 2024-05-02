@@ -12,15 +12,15 @@ def main():
         "iai-group/clef2024_checkthat_task1_es",
         "iai-group/clef2024_checkthat_task1_nl",
     ]
-    label_map = {"No": 0, "Yes": 1}
+    label_map = {"Yes": 1, "No": 0}
 
     model_name_en = "FacebookAI/roberta-large"
     multilingual_model = "FacebookAI/xlm-roberta-large"
     seeds = [42, 81, 1024, 6, 10]
     tokenizer = AutoTokenizer.from_pretrained(model_name_en)
 
-    for dataset_name in dataset_list:
-        for seed in seeds:
+    for seed in seeds:
+        for dataset_name in dataset_list:
             dataset = load_dataset(dataset_name)
             if "tweet_text" in dataset["train"].column_names:
                 dataset = rename_features(dataset)

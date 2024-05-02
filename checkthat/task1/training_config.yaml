@@ -1,11 +1,12 @@
 training_arguments:
-  # save_strategy: 'epoch'           # save model after each epoch
-  # evaluation_strategy: 'epoch' # To change evaluation strategy comment out the line and uncomment the next line two lines
-  eval_steps: 500
-  evaluation_strategy: 'steps'    # evaluate after some number of steps
+  save_strategy: 'epoch'           # save model after each epoch
+  evaluation_strategy: 'epoch' # To change evaluation strategy comment out the line and uncomment the next line two lines
+  greater_is_better: True
+  # eval_steps: 500
+  # evaluation_strategy: 'steps'    # evaluate after some number of steps
   output_dir: './results'          # output directory
   save_total_limit: 5             # number of maximum checkpoints to save
-  num_train_epochs: 50             # number of training epochs
+  num_train_epochs: 100             # number of training epochs
   per_device_train_batch_size: 16 # batch size for training
   per_device_eval_batch_size: 16  # batch size for evaluation
   warmup_steps: 500               # number of warmup steps for learning rate scheduler
@@ -13,6 +14,6 @@ training_arguments:
   logging_dir: './logs'           # directory for storing logs
   logging_steps: 10
   load_best_model_at_end: True
-  metric_for_best_model: 'loss'    # metric to use for saving best model
+  metric_for_best_model: "f1"     # metric to use for saving best model
   report_to: 'wandb'               # report to wandb
 

@@ -12,7 +12,6 @@ from training_scripts.train_config import get_language
 import random
 import numpy as np
 import torch
-import os
 import torch.cuda
 import torch
 torch.backends.cuda.matmul.allow_tf32 = True
@@ -50,7 +49,6 @@ def run_training(seed, dataset, model_name, tokenizer, label_map, training_argum
     # Prepare datasets
     train_dataset = TextDataset(dataset["train"], tokenizer, label_map)
     eval_dataset = TextDataset(dataset["validation"], tokenizer, label_map)
-    test_dataset = TextDataset(dataset["test"], tokenizer, label_map)
 
     # training_arguments = get_training_arguments()
     training_arguments.run_name = (
