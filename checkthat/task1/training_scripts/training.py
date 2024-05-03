@@ -68,6 +68,10 @@ def run_training(seed, dataset, model, tokenizer, label_map, training_arguments,
 
     # Train the model
     trainer.train()
+    model.save_pretrained("./trained_models")
+
+    # Save the tokenizer
+    tokenizer.save_pretrained("./trained_models")
 
     # Finish the wandb run after each seed
     wandb.finish()
