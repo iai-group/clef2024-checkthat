@@ -9,69 +9,82 @@ from models.custom_model import CustomModel
 from metrics.compute_metrics import compute_metrics
 from training_scripts.train_config import get_training_arguments
 from training_scripts.train_config import get_language
-import random
 import numpy as np
 import torch
 import torch.cuda
 import torch
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, TrainingArguments
 
-def set_seed(seed):
-    """Set seed for reproducibility."""
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
 
-def run_training(seed, dataset, model, tokenizer, label_map, training_arguments, dataset_language):
-    """Start training the model for a single seed.
 
-    Args:
-        seed: seed for reproducibility
-        dataset: dataset dictionary containing train and validation splits
-        model: huggingface model name
-        tokenizer: huggerface tokenizer/same as model name
-        label_map: dictionary mapping labels to integers
-    """
-    # Initialize wandb run
-    set_seed(seed)
-    run_name = f"{model}_{seed}_{dataset_language}"
-    wandb.init(
-        project="Clef2024",
+def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_language, test_dataset=None,):
+    """Run training sweep. Evaluate on validation set and test set."""
+    
+    run_name = wandb.init(
+        project="sweep_test",
         entity="aarnes",
-        name=run_name,
-        config={"seed": seed},
-    )   
+        reinit=True
+    ).name
 
-    # Prepare datasets
-    train_dataset = TextDataset(dataset["train"], tokenizer, label_map)
-    eval_dataset = TextDataset(dataset["validation"], tokenizer, label_map)
+    # Load model and tokenizer from Hugging Face
+    hf_model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=len(label_map))
+    hf_tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    # training_arguments = get_training_arguments()
-    training_arguments.run_name = (
-        run_name  # Optional, sync the name with Trainer's internal wandb run
+
+    # Define training arguments
+    training_arguments = TrainingArguments(
+        output_dir="./results",  # Directory to save model and tokenizer
+        evaluation_strategy="epoch",
+        learning_rate=wandb.config.learning_rate,
+        per_device_train_batch_size=wandb.config.batch_size,
+        num_train_epochs=wandb.config.epochs,
+        logging_dir='./logs',
+        logging_steps=10,
+        do_train=True,
+        do_eval=True,
+        load_best_model_at_end=True,
+        save_strategy="epoch",  # Save model at the end of each epoch
+        save_total_limit=1,  # Optional: limits the total amount of checkpoints, deleting older
+        report_to="wandb",
+        run_name=run_name,
     )
 
-    # Creating a Trainer instance with training arguments and datasets
+    # Create a Trainer instance
     trainer = Trainer(
-        model=CustomModel(model, num_labels=len(label_map), device='cuda'),
+        model=hf_model,
         args=training_arguments,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        compute_metrics=compute_metrics(),
-        callbacks=[
-            EarlyStoppingCallback(early_stopping_patience=3)
-        ],  # Early stopping callback
+        compute_metrics=compute_metrics,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
     )
 
     # Train the model
     trainer.train()
-    model.save_pretrained("./trained_models")
+    # Evaluate the model on the test dataset
+    test_output = trainer.predict(test_dataset)
+    test_results = {f"test_{k}": v for k, v in test_output.metrics.items()}
 
-    # Save the tokenizer
-    tokenizer.save_pretrained("./trained_models")
+    
 
-    # Finish the wandb run after each seed
+    # Evaluate the model
+    eval_results = trainer.evaluate()
+    
+    # Log evaluation and test results to W&B
+    wandb.log({"eval_results": eval_results})
+    wandb.log({"test_results": test_results})
+
+    # Save model and tokenizer at the end of training
+    model_path = f"{training_arguments.output_dir}/{run_name}_model_{dataset_language}"
+    tokenizer_path = f"{training_arguments.output_dir}/{run_name}_tokenizer_{dataset_language}"
+
+    hf_model.save_pretrained(model_path)
+    hf_tokenizer.save_pretrained(tokenizer_path)
+
+    # Ensure the W&B run is finished
     wandb.finish()
+
+    # Return paths for model and tokenizer for user reference
+    return model_path, tokenizer_path
