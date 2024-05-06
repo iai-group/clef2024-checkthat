@@ -20,7 +20,7 @@ parameters:
   hidden_dropout_prob:
     values: [0.1, 0.2, 0.3]  # Define discrete steps for grid search
   epochs:
-    values: [10, 20, 50]  # Convert range to discrete values
+    values: [50]  # Convert range to discrete values
   batch_size:
     values: [16, 32]
   learning_rate:

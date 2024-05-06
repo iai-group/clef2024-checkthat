@@ -43,24 +43,25 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
     hf_tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 
-    # Define training arguments
     training_arguments = TrainingArguments(
-        output_dir=f"./results_{dataset_language}",  # Directory to save model and tokenizer
+        output_dir=f"./results_{dataset_language}",
         evaluation_strategy="epoch",
         learning_rate=wandb.config.learning_rate,
         per_device_train_batch_size=wandb.config.batch_size,
         num_train_epochs=wandb.config.epochs,
         logging_dir='./logs',
-        logging_steps=10,
+        logging_steps=100,
         do_train=True,
         do_eval=True,
         load_best_model_at_end=True,
-        save_strategy="epoch",  # Save model at the end of each epoch
-        save_total_limit=1,  # Optional: limits the total amount of checkpoints, deleting older
+        metric_for_best_model="f1",  # Here you specify the metric from your sweep config
+        greater_is_better=True,  # Since the goal is to maximize
+        save_strategy="epoch",
+        save_total_limit=1,
         report_to="wandb",
         run_name=run_name,
     )
-
+    
     # Create a Trainer instance
     trainer = Trainer(
         model=hf_model,
