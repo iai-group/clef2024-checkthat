@@ -3,12 +3,16 @@
 This script trains the model for a single seed.
 """
 import wandb
-from transformers import Trainer, EarlyStoppingCallback
+from transformers import Trainer, EarlyStoppingCallback, EvalPrediction
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
+
 from tokenization.tokenizer import TextDataset
 from models.custom_model import CustomModel
-from metrics.compute_metrics import compute_metrics
+#from metrics.compute_metrics import compute_metrics
 from training_scripts.train_config import get_training_arguments
 from training_scripts.train_config import get_language
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
+
 import numpy as np
 import torch
 import torch.cuda
@@ -17,6 +21,12 @@ torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, TrainingArguments
 
+def compute_metrics(p: EvalPrediction):
+    preds = np.argmax(p.predictions, axis=1)
+    labels = p.label_ids
+    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro', pos_label=1)
+    acc = accuracy_score(labels, preds)
+    return {"accuracy": acc, "f1": f1, "precision": precision, "recall": recall}
 
 
 def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_language, test_dataset=None,):
@@ -35,7 +45,7 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
 
     # Define training arguments
     training_arguments = TrainingArguments(
-        output_dir="./results",  # Directory to save model and tokenizer
+        output_dir=f"./results_{dataset_language}",  # Directory to save model and tokenizer
         evaluation_strategy="epoch",
         learning_rate=wandb.config.learning_rate,
         per_device_train_batch_size=wandb.config.batch_size,
@@ -61,6 +71,7 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
     )
 
+
     # Train the model
     trainer.train()
     # Evaluate the model on the test dataset
@@ -69,12 +80,7 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
 
     
 
-    # Evaluate the model
-    eval_results = trainer.evaluate()
-    
-    # Log evaluation and test results to W&B
-    wandb.log({"eval_results": eval_results})
-    wandb.log({"test_results": test_results})
+
 
     # Save model and tokenizer at the end of training
     model_path = f"{training_arguments.output_dir}/{run_name}_model_{dataset_language}"
@@ -82,6 +88,13 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
 
     hf_model.save_pretrained(model_path)
     hf_tokenizer.save_pretrained(tokenizer_path)
+
+    # Evaluate the model
+    eval_results = trainer.evaluate()
+    
+    # Log evaluation and test results to W&B
+    wandb.log({"eval_results": eval_results})
+    wandb.log({"test_results": test_results})
 
     # Ensure the W&B run is finished
     wandb.finish()

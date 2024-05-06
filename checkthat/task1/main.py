@@ -45,6 +45,6 @@ if __name__ == "__main__":
         default="iai-group/clef2024_checkthat_task1_en",  # For English language
         help="Name of the dataset from the iai-group/clef2024_checkthat_task1_* datasets",
     )
-
+    
     args = parser.parse_args()
     main(args)
