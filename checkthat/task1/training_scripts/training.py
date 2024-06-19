@@ -4,15 +4,11 @@ This script trains the model for a single seed.
 """
 import wandb
 from transformers import Trainer, EarlyStoppingCallback, EvalPrediction
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score
-
 from tokenization.tokenizer import TextDataset
 from models.custom_model import CustomModel
-#from metrics.compute_metrics import compute_metrics
+# from metrics.compute_metrics import compute_metrics
 from training_scripts.train_config import get_training_arguments
 from training_scripts.train_config import get_language
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score
-
 import numpy as np
 import torch
 import torch.cuda
@@ -20,6 +16,9 @@ import torch
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, TrainingArguments
+
+from transformers import Trainer, EarlyStoppingCallback, EvalPrediction
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 def compute_metrics(p: EvalPrediction):
     preds = np.argmax(p.predictions, axis=1)
@@ -31,7 +30,7 @@ def compute_metrics(p: EvalPrediction):
 
 def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_language, test_dataset=None,):
     """Run training sweep. Evaluate on validation set and test set."""
-    
+    print("Starting to train..")
     run_name = wandb.init(
         project="sweep_test",
         entity="aarnes",
@@ -43,6 +42,7 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
     hf_tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 
+    # Define training arguments
     training_arguments = TrainingArguments(
         output_dir=f"./results_{dataset_language}",
         evaluation_strategy="epoch",
@@ -61,7 +61,7 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
         report_to="wandb",
         run_name=run_name,
     )
-    
+
     # Create a Trainer instance
     trainer = Trainer(
         model=hf_model,
@@ -72,15 +72,8 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
     )
 
-
     # Train the model
     trainer.train()
-    # Evaluate the model on the test dataset
-    test_output = trainer.predict(test_dataset)
-    test_results = {f"test_{k}": v for k, v in test_output.metrics.items()}
-
-    
-
 
 
     # Save model and tokenizer at the end of training
@@ -89,14 +82,17 @@ def run_training(train_dataset, eval_dataset, model_name, label_map, dataset_lan
 
     hf_model.save_pretrained(model_path)
     hf_tokenizer.save_pretrained(tokenizer_path)
-
+    
     # Evaluate the model
     eval_results = trainer.evaluate()
     
+    # Evaluate the model on the test dataset
+    test_output = trainer.predict(test_dataset)
+    test_results = {f"test_{k}": v for k, v in test_output.metrics.items()}
+
     # Log evaluation and test results to W&B
     wandb.log({"eval_results": eval_results})
     wandb.log({"test_results": test_results})
-
     # Ensure the W&B run is finished
     wandb.finish()
 
