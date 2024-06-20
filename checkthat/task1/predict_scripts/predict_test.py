@@ -6,6 +6,8 @@ import torch
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import DataLoader
 from transformers import DataCollatorWithPadding
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
+
 
 
 def main():
@@ -14,7 +16,7 @@ def main():
     
     # Load tokenizer
 
-    dataset_name ="iai-group/clef2024_checkthat_task1_nl"
+    dataset_name ="clef2024_checkthat_task1_nl"
     dataset = load_dataset(dataset_name)
     if "tweet_text" in dataset["test"].column_names:
         dataset = rename_features(dataset)
@@ -23,9 +25,8 @@ def main():
 
 
     """Saved model and tokenizer paths."""
-    saved_model_path = "/home/stud/u2929246/bhome/checkthat_sweep/clef2024-checkthat/checkthat/task1/results_nl/rural-sweep-9_model_nl"
-    saved_tokenizer_path = "/home/stud/u2929246/bhome/checkthat_sweep/clef2024-checkthat/checkthat/task1/results_nl/rural-sweep-9_tokenizer_nl"
-
+    saved_model_path = '' # Replace this with the path to your model
+    saved_tokenizer_path = '' # Replace this with the path to your tokenizer
     tokenizer_dataset = AutoTokenizer.from_pretrained(saved_tokenizer_path)
     tokenizer = AutoTokenizer.from_pretrained(saved_tokenizer_path)
 
@@ -61,7 +62,6 @@ def main():
             labels.extend(batch['labels'].cpu().numpy())  # assuming labels are part of your batch
 
     # Calculate metrics
-    from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
     precision, recall, f1, _ = precision_recall_fscore_support(labels, predictions, average='macro')
     acc = accuracy_score(labels, predictions)

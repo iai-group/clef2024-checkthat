@@ -5,7 +5,7 @@ import sys
 sys.path.append('.')
 
 def translate_tweets(data_fpath, source_language, target_language):
-    """Translate tweets in arabic, dutch or spanish into target language
+    """Translate tweets in arabic, dutch or spanish into target language.
 
     Tweets need to be provided in the format provided in CheckThat Task1
 

@@ -1,0 +1,23 @@
+# Sweep method can be grid, random, bayesian
+method: grid
+
+# Project for sweep
+entity: # your_wandb_username
+
+# Metrics to optimize
+metric:
+  name: f1,
+  goal: maximize
+
+
+parameters:
+  metric_for_best_model:
+    values: ["f1"]
+  hidden_dropout_prob:
+    values: [0.1, 0.2, 0.3]  # Define discrete steps for grid search
+  epochs:
+    values: [50]  # Convert range to discrete values
+  batch_size:
+    values: [16, 32]
+  learning_rate:
+    values: [0.0000125, 0.000025, 0.00005, 0.000075]  # Define steps for learning rate

@@ -20,7 +20,9 @@ def compute_custom_metrics(logits, labels):
     predictions = np.argmax(logits, axis=1)  # Convert logits to predictions
 
     # Calculate metrics
-    precision = precision_score(labels, predictions, average="macro", pos_label=1)
+    precision = precision_score(
+        labels, predictions, average="macro", pos_label=1
+    )
     recall = recall_score(labels, predictions, average="macro", pos_label=1)
     f1 = f1_score(labels, predictions, average="macro", pos_label=1)
 

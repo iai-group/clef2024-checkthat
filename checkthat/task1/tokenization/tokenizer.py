@@ -1,8 +1,10 @@
 import torch
 from torch.utils.data import Dataset
 
+
 class TextDataset(Dataset):
-    """Takes a list of dictionaries containing text and optionally class labels.
+    """Takes a list of dictionaries containing text and optionally class
+    labels.
 
     Args:
         data (list): A list of dictionaries with keys 'Text' and optionally 'class_label'.
@@ -21,8 +23,12 @@ class TextDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        """Tokenize the text and return a dictionary containing the tokenized data.
-        If labels are present, include them, otherwise only return inputs."""
+        """Tokenize the text and return a dictionary containing the tokenized
+        data.
+
+        If labels are present, include them, otherwise only return
+        inputs.
+        """
         item = self.data[idx]
         encoded = self.tokenizer.encode_plus(
             item["Text"],
@@ -38,7 +44,7 @@ class TextDataset(Dataset):
             "attention_mask": encoded["attention_mask"].squeeze(0),
         }
 
-        if 'class_label' in item and self.label_map is not None:
+        if "class_label" in item and self.label_map is not None:
             label_id = self.label_map[item["class_label"]]
             result["labels"] = torch.tensor(label_id)
 

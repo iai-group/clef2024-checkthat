@@ -1,39 +1,46 @@
-"""Will run script to run training and testing. (unlabeled tests yet to ble implemented)
+"""Will run script to run training and testing. (unlabeled tests yet to ble
+implemented)
 
 Argument parser is used to specify the model name and dataset name.
 """
 import argparse
+
 from datasets import load_dataset
+from tokenization.normalize_DatasetDict_featues import rename_features
+from tokenization.tokenizer import TextDataset
 from training_scripts.training import run_training
 from transformers import AutoTokenizer
-from tokenization.tokenizer import TextDataset
-from tokenization.normalize_DatasetDict_featues import rename_features
 
 
 def main():
     # """Run training."""
     label_map = {"Yes": 1, "No": 0}
-    
-    # tokenizer = AutoTokenizer.from_pretrained(args.model_name)
 
-    # dataset = load_dataset(args.dataset)
-    model_name = "roberta-large"
+    """Load dataset and tokenizer."""
+    model_name = "roberta-large"  # Replace this with the path to your tokenizer
     try:
         tokenizer = AutoTokenizer.from_pretrained(model_name)
     except:
         print("Model not found")
 
-    dataset_name ="iai-group/clef2024_checkthat_task1_en"
+    dataset_name = "iai-group/clef2024_checkthat_task1_en"
     dataset = load_dataset(dataset_name)
     dataset_language = dataset_name[-2:]
     if "tweet_text" in dataset["train"].column_names:
-                dataset = rename_features(dataset)
+        dataset = rename_features(dataset)
 
     train_dataset = TextDataset(dataset["train"], tokenizer, label_map)
     eval_dataset = TextDataset(dataset["validation"], tokenizer, label_map)
     test_dataset = TextDataset(dataset["test"], tokenizer, label_map)
 
-    run_training(train_dataset, eval_dataset, model_name, label_map, dataset_language, test_dataset)
+    run_training(
+        train_dataset,
+        eval_dataset,
+        model_name,
+        label_map,
+        dataset_language,
+        test_dataset,
+    )
 
 
 if __name__ == "__main__":

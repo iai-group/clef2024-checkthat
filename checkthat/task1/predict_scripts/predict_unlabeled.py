@@ -9,8 +9,8 @@ def main():
     label_map = {0: "No", 1: "Yes"}
     
     # Load tokenizer and model
-    tokenizer = AutoTokenizer.from_pretrained("/home/stud/u2929246/bhome/checkthat_sweep/clef2024-checkthat/checkthat/task1/results_en/astral-sweep-10_tokenizer_en")
-    model_path = "/home/stud/u2929246/bhome/checkthat_sweep/clef2024-checkthat/checkthat/task1/results_en/astral-sweep-10_model_en"
+    tokenizer = AutoTokenizer.from_pretrained("roberta-large") # Replace this with the path to your tokenizer
+    model_path = ""  # Replace this with the path to your model
     model = AutoModelForSequenceClassification.from_pretrained(model_path, num_labels=len(label_map))
 
     # Assuming you're using a GPU if available
@@ -19,7 +19,7 @@ def main():
     model.eval()
 
     # Load your data from a TSV file
-    input_data = pd.read_csv("/home/stud/u2929246/bhome/checkthat_sweep/clef2024-checkthat/checkthat/task1/unlabeled_test.tsv", sep='\t')
+    input_data = pd.read_csv("unlabeled_test_data.tsv", sep='\t')
     dataset = Dataset.from_pandas(input_data)
 
     # Prepare dataset for processing
@@ -50,7 +50,7 @@ def main():
             results.extend(zip(ids, pred_labels.cpu().numpy(), [run_id]*len(ids)))
 
     # Write predictions to a TSV file
-    with open('results.tsv', 'w') as file:
+    with open('unlabeled_test_results.tsv', 'w') as file:
         file.write("id\tclass_label\trun_id\n")
         for result in results:
             file.write(f"{result[0]}\t{label_map[result[1]]}\t{result[2]}\n")
