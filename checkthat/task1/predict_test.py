@@ -10,7 +10,7 @@ from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 
 
-def main():
+def test_predict():
     # """Run training."""
     label_map = {"Yes": 1, "No": 0}
     
@@ -69,6 +69,3 @@ def main():
     print(f"Accuracy: {acc}, F1: {f1}, Precision: {precision}, Recall: {recall}")
 
 
-
-if __name__ == "__main__":
-    main()

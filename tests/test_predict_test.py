@@ -1,21 +1,4 @@
-import sys
 from unittest.mock import MagicMock, patch
-
-import sys
-# Clean up the sys.path to remove incorrect entries
-sys.path = [p for p in sys.path if not p.endswith('\n')]
-
-# Optionally, append the correct path explicitly if it's not already included
-correct_path = '/Users/aarnes/Desktop/github_clones/clef2024-checkthat'
-if correct_path not in sys.path:
-    sys.path.insert(0, correct_path)
-
-import sys
-sys.path.insert(0, '/Users/aarnes/Desktop/github_clones/clef2024-checkthat/checkthat')
-
-print()
-print(sys.path)
-print()
 import pytest
 import torch
 from transformers import (
@@ -24,7 +7,7 @@ from transformers import (
     TrainingArguments,
 )
 
-from checkthat.task1.predict_test import main
+from checkthat.task1.predict_test import test_predict
 
 
 @pytest.fixture
@@ -61,14 +44,3 @@ def mock_environment():
 
         yield
 
-def test_main_runs_through(mock_environment):
-    # Execute the main function
-    main()
-
-    # Here, you would typically add assertions to verify that the correct calls were made,
-    # For instance, check if models and tokenizers were loaded with the correct arguments,
-    # or if the DataLoader was called correctly. Since `main` does not return anything,
-    # you are limited to checking side effects and interactions.
-    # Examples:
-    # mock_from_pretrained.assert_called_with('path_to_tokenizer')
-    # mock_model_pretrained.assert_called_with('path_to_model', num_labels=2)
