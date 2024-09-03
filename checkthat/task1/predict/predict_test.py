@@ -16,7 +16,7 @@ def test_predict():
     
     # Load tokenizer
 
-    dataset_name ="" # Replace this with the name of your dataset
+    dataset_name ="iai-group/clef2024_checkthat_task1_en" # Replace this with the name of your dataset
     dataset = load_dataset(dataset_name)
     if "tweet_text" in dataset["test"].column_names:
         dataset = rename_features(dataset)
@@ -25,8 +25,8 @@ def test_predict():
 
 
     """Saved model and tokenizer paths."""
-    saved_model_path = '' # Replace this with the path to your model
-    saved_tokenizer_path = '' # Replace this with the path to your tokenizer
+    saved_model_path = 'FacebookAI/roberta-large' # Replace this with the path to your model
+    saved_tokenizer_path = 'FacebookAI/roberta-large' # Replace this with the path to your tokenizer
     tokenizer_dataset = AutoTokenizer.from_pretrained(saved_tokenizer_path)
     tokenizer = AutoTokenizer.from_pretrained(saved_tokenizer_path)
 

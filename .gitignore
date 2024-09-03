@@ -133,3 +133,4 @@ dmypy.json
 
 # Exclude node_modules
 .vscode/
+tokenizer.json

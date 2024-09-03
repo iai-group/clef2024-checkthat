@@ -1,46 +1,50 @@
-from unittest.mock import MagicMock, patch
 import pytest
-import torch
-from transformers import (
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
-    TrainingArguments,
-)
+from unittest.mock import patch, MagicMock
 
-from checkthat.task1.predict_test import test_predict
-
+# Import the function to be tested
+from checkthat.task1.predict.predict_test import test_predict
 
 @pytest.fixture
-def mock_environment():
-    with patch("checkthat.task1.predict_test.load_dataset") as mock_load_dataset, \
-         patch("checkthat.task1.predict_test.AutoTokenizer.from_pretrained") as mock_from_pretrained, \
-         patch("checkthat.task1.predict_test.AutoModelForSequenceClassification.from_pretrained") as mock_model_pretrained, \
-         patch("checkthat.task1.predict_test.TextDataset") as mock_text_dataset, \
-         patch("torch.cuda.is_available", return_value=True), \
-         patch("torch.device"), \
-         patch("torch.utils.data.DataLoader") as mock_dataloader, \
-         patch("checkthat.task1.predict_test.rename_features") as mock_rename_features:
+def mock_dependencies():
+    with patch('torch.device') as mock_device, \
+         patch('torch.cuda.is_available') as mock_cuda_available, \
+         patch('torch.utils.data.DataLoader') as mock_dataloader, \
+         patch('torch.no_grad') as mock_no_grad, \
+         patch('sklearn.metrics.precision_recall_fscore_support') as mock_prf, \
+         patch('sklearn.metrics.accuracy_score') as mock_accuracy:
         
-        # Setup mock for dataset loading
-        mock_dataset = MagicMock()
-        mock_dataset.__getitem__.return_value = {'column_names': ['tweet_text']}
-        mock_load_dataset.return_value = {"test": mock_dataset}
+        # Set up minimal mock returns
+        mock_device.return_value = MagicMock()
+        mock_cuda_available.return_value = False
+        mock_dataloader.return_value = [
+            {
+                'input_ids': MagicMock(),
+                'attention_mask': MagicMock(),
+                'labels': MagicMock()
+            }
+        ]
+        mock_no_grad.return_value.__enter__.return_value = None
+        mock_prf.return_value = (0.5, 0.5, 0.5, None)
+        mock_accuracy.return_value = 0.5
 
-        # Mock model and tokenizer
-        tokenizer_instance = MagicMock(spec=AutoTokenizer)
-        model_instance = MagicMock(spec=AutoModelForSequenceClassification)
-        mock_from_pretrained.return_value = tokenizer_instance
-        mock_model_pretrained.return_value = model_instance
+        yield {
+            'dataloader': mock_dataloader,
+            'prf': mock_prf,
+            'accuracy': mock_accuracy
+        }
 
-        # Mock TextDataset
-        mock_dataset_instance = MagicMock()
-        mock_text_dataset.return_value = mock_dataset_instance
+def test_test_predict(mock_dependencies, capsys):
+    # Call the function
+    test_predict()
 
-        # Mock DataLoaderéé
-        mock_dataloader.return_value = iter([{'input_ids': torch.tensor([1]), 'labels': torch.tensor([1])}])
+    # Check that the function ran and produced output
+    captured = capsys.readouterr()
+    assert "Accuracy:" in captured.out
+    assert "F1:" in captured.out
+    assert "Precision:" in captured.out
+    assert "Recall:" in captured.out
 
-        # Setup mock for renaming features if needed
-        mock_rename_features.return_value = mock_dataset
-
-        yield
+    # Verify that key metric calculations were called
+    mock_dependencies['prf'].assert_called_once()
+    mock_dependencies['accuracy'].assert_called_once()
 
