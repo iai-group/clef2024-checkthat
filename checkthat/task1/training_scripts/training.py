@@ -22,7 +22,7 @@ from transformers import (
 )
 
 
-def compute_metrics(p: EvalPrediction):
+def compute_metrics(p: EvalPrediction) -> dict:
     preds = np.argmax(p.predictions, axis=1)
     labels = p.label_ids
     precision, recall, f1, _ = precision_recall_fscore_support(
@@ -31,16 +31,22 @@ def compute_metrics(p: EvalPrediction):
     acc = accuracy_score(labels, preds)
     return {"accuracy": acc, "f1": f1, "precision": precision, "recall": recall}
 
+
 import yaml
 
 
-def load_config(file_path):
-    with open(file_path, 'r') as file:
+def load_config(file_path) -> dict:
+    with open(file_path, "r") as file:
         full_config = yaml.safe_load(file)
-    if full_config is None or 'parameters' not in full_config:
-        raise ValueError("Configuration file is empty or incorrectly formatted.")
+    if full_config is None or "parameters" not in full_config:
+        raise ValueError(
+            "Configuration file is empty or incorrectly formatted."
+        )
     # Simplify the config structure for easier usage:
-    simplified_config = {key: value['values'][0] for key, value in full_config['parameters'].items()}
+    simplified_config = {
+        key: value["values"][0]
+        for key, value in full_config["parameters"].items()
+    }
     return simplified_config
 
 
@@ -51,9 +57,11 @@ def run_training(
     label_map,
     dataset_language,
     test_dataset=None,
-):
-    
-    config = load_config("/Users/aarnes/Desktop/github_clones/clef2024-checkthat/checkthat/task1/wandb_yaml.yaml")
+) -> tuple:
+
+    config = load_config(
+        "/Users/aarnes/Desktop/github_clones/clef2024-checkthat/checkthat/task1/wandb_yaml.yaml"
+    )
 
     """Run training sweep.
 

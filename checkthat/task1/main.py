@@ -12,7 +12,7 @@ from training_scripts.training import run_training
 from transformers import AutoTokenizer
 
 
-def main():
+def main() -> None:
     # """Run training."""
     label_map = {"Yes": 1, "No": 0}
 
