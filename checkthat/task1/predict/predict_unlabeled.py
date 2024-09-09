@@ -1,3 +1,4 @@
+"""Script to predict labels for unlabeled test data using a trained model."""
 import pandas as pd
 from datasets import Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification

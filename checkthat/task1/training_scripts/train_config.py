@@ -1,7 +1,7 @@
+"""Module for loading training configuration from a yaml file"""
+
 import yaml
 from transformers import TrainingArguments
-
-
 def load_config(file_path) -> dict:
     """Load configuration from a yaml file."""
     with open(file_path, "r") as file:

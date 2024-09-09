@@ -1,6 +1,6 @@
+"""Module for tokenizing text data."""
 import torch
 from torch.utils.data import Dataset
-
 
 class TextDataset(Dataset):
     """Takes a list of dictionaries containing text and optionally class

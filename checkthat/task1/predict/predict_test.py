@@ -1,3 +1,4 @@
+"""Test the predict function module."""
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from tokenization.normalize_DatasetDict_featues import rename_features
@@ -6,25 +7,25 @@ import torch
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import DataLoader
 from transformers import DataCollatorWithPadding
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 
 def test_predict() -> None:
     # """Run training."""
     label_map = {"Yes": 1, "No": 0}
 
-    # Load tokenizer
-
-    dataset_name = "iai-group/clef2024_checkthat_task1_en"  # Replace this with the name of your dataset
+    # Replace this with the name of your dataset
+    dataset_name = "iai-group/clef2024_checkthat_task1_en"  
     dataset = load_dataset(dataset_name)
     if "tweet_text" in dataset["test"].column_names:
         dataset = rename_features(dataset)
 
-    """Saved model and tokenizer paths."""
+    """Insert saved model and tokenizer paths."""
     saved_model_path = (
-        "FacebookAI/roberta-large"  # Replace this with the path to your model
+        "FacebookAI/roberta-large"  
     )
-    saved_tokenizer_path = "FacebookAI/roberta-large"  # Replace this with the path to your tokenizer
+
+    # Replace this with the path to your tokenizer
+    saved_tokenizer_path = "FacebookAI/roberta-large"  
     tokenizer_dataset = AutoTokenizer.from_pretrained(saved_tokenizer_path)
     tokenizer = AutoTokenizer.from_pretrained(saved_tokenizer_path)
 
@@ -39,7 +40,8 @@ def test_predict() -> None:
     hf_model.to(device)
     hf_model.eval()
 
-    # Assuming TextDataset is properly returning tokenized outputs and compatible with DataLoader
+    # Assuming TextDataset is properly returning tokenized outputs 
+    # and compatible with DataLoader
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer_dataset)
 
     # Creating a DataLoader for batch processing

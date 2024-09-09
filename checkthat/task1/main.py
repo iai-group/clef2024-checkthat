@@ -17,11 +17,9 @@ def main() -> None:
     label_map = {"Yes": 1, "No": 0}
 
     """Load dataset and tokenizer."""
-    model_name = "roberta-large"  # Replace this with the path to your tokenizer
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-    except:
-        print("Model not found")
+    # Replace this with the path to your tokenizer
+    model_name = "roberta-large"  
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     dataset_name = "iai-group/clef2024_checkthat_task1_en"
     dataset = load_dataset(dataset_name)
@@ -45,7 +43,7 @@ def main() -> None:
 
 if __name__ == "__main__":
 
-    # parser = argparse.ArgumentParser(description="Run training and testing.")
+    parser = argparse.ArgumentParser(description="Run training and testing.")
 
     # # parser.add_argument(
     # #     "--test", action="store_true", help="Whether to run testing"
@@ -59,8 +57,8 @@ if __name__ == "__main__":
     # parser.add_argument(
     #     "--dataset",
     #     type=str,
-    #     default="iai-group/clef2024_checkthat_task1_en",  # For English language
-    #     help="Name of the dataset from the iai-group/clef2024_checkthat_task1_* datasets",
+    #     default="iai-group/clef2024_checkthat_task1_en", 
+    #     help="Name of the dataset from Hugging Face",
     # )
 
     # args = parser.parse_args()

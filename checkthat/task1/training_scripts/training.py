@@ -6,9 +6,6 @@ import numpy as np
 import torch
 import torch.cuda
 import wandb
-
-from transformers import EarlyStoppingCallback, EvalPrediction, Trainer
-
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
@@ -60,7 +57,7 @@ def run_training(
 ) -> tuple:
 
     config = load_config(
-        "/Users/aarnes/Desktop/github_clones/clef2024-checkthat/checkthat/task1/wandb_yaml.yaml"
+        "checkthat/task1/training_config.yaml"
     )
 
     """Run training sweep.
@@ -69,7 +66,7 @@ def run_training(
     """
     print("Starting to train..")
     run_name = wandb.init(
-        project="wandb_yaml", entity="aarnes", reinit=True
+        project="wandb_yaml", entity="your_user", reinit=True
     ).name
 
     # Load model and tokenizer from Hugging Face
@@ -90,8 +87,8 @@ def run_training(
         do_train=True,
         do_eval=True,
         load_best_model_at_end=True,
-        metric_for_best_model="f1",  # Here you specify the metric from your sweep config
-        greater_is_better=True,  # Since the goal is to maximize
+        metric_for_best_model="f1",  
+        greater_is_better=True, 
         save_strategy="epoch",
         save_total_limit=1,
         report_to="wandb",
