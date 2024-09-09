@@ -1,4 +1,4 @@
-"""Test the predict function module."""
+"""Module for predict function for labeled data."""
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from tokenization.normalize_DatasetDict_featues import rename_features
@@ -10,22 +10,21 @@ from transformers import DataCollatorWithPadding
 
 
 def test_predict() -> None:
+    """Test predict function."""
     # """Run training."""
     label_map = {"Yes": 1, "No": 0}
 
     # Replace this with the name of your dataset
-    dataset_name = "iai-group/clef2024_checkthat_task1_en"  
+    dataset_name = "iai-group/clef2024_checkthat_task1_en"
     dataset = load_dataset(dataset_name)
     if "tweet_text" in dataset["test"].column_names:
         dataset = rename_features(dataset)
 
-    """Insert saved model and tokenizer paths."""
-    saved_model_path = (
-        "FacebookAI/roberta-large"  
-    )
+    # Insert saved model and tokenizer paths.
+    saved_model_path = "FacebookAI/roberta-large"
 
     # Replace this with the path to your tokenizer
-    saved_tokenizer_path = "FacebookAI/roberta-large"  
+    saved_tokenizer_path = "FacebookAI/roberta-large"
     tokenizer_dataset = AutoTokenizer.from_pretrained(saved_tokenizer_path)
     tokenizer = AutoTokenizer.from_pretrained(saved_tokenizer_path)
 
@@ -40,7 +39,7 @@ def test_predict() -> None:
     hf_model.to(device)
     hf_model.eval()
 
-    # Assuming TextDataset is properly returning tokenized outputs 
+    # Assuming TextDataset is properly returning tokenized outputs
     # and compatible with DataLoader
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer_dataset)
 
