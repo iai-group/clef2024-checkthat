@@ -1,8 +1,15 @@
+# Program to run
+program: main.py
+arguments:
+  - --model_name=FacebookAI/roberta-large
+  - --dataset=iai-group/clef2024_checkthat_task1_en
+
+
 # Sweep method can be grid, random, bayesian
 method: grid
 
 # Project for sweep
-entity: # your_wandb_username
+entity: iai-group
 
 # Metrics to optimize
 metric:
