@@ -1,4 +1,5 @@
 """Script to predict labels for unlabeled test data using a trained model."""
+
 import pandas as pd
 from datasets import Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -31,9 +32,7 @@ def main():
 
     # Prepare dataset for processing
     def tokenize_function(examples):
-        return tokenizer(
-            examples["Text"], padding="max_length", truncation=True
-        )
+        return tokenizer(examples["Text"], padding="max_length", truncation=True)
 
     tokenized_datasets = dataset.map(tokenize_function, batched=True)
     test_dataset = tokenized_datasets.remove_columns(["Text"])
@@ -43,9 +42,7 @@ def main():
 
     # DataLoader setup
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-    test_loader = DataLoader(
-        test_dataset, batch_size=16, collate_fn=data_collator
-    )
+    test_loader = DataLoader(test_dataset, batch_size=16, collate_fn=data_collator)
 
     # Run predictions
     run_id = "roberta-large"  # Replace this with your actual run identifier
@@ -66,9 +63,7 @@ def main():
                 batch["Sentence_id"].cpu().numpy()
             )  # Extracting Sentence IDs from the batch
 
-            results.extend(
-                zip(ids, pred_labels.cpu().numpy(), [run_id] * len(ids))
-            )
+            results.extend(zip(ids, pred_labels.cpu().numpy(), [run_id] * len(ids)))
 
     # Write predictions to a TSV file
     with open("unlabeled_test_results.tsv", "w") as file:

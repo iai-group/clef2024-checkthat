@@ -2,6 +2,7 @@
 
 Use inference scripts in the predict module.
 """
+
 import argparse
 
 from datasets import load_dataset

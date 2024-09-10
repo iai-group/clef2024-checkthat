@@ -23,18 +23,15 @@ def test_predict() -> None:
         labels.append(label)
 
     # Calculate metrics
-    accuracy = sum([1 for p, l in zip(predictions, labels) if p == l]) / len(
-        labels
-    )
+    accuracy = sum([1 for p, l in zip(predictions, labels) if p == l]) / len(labels)
     precision = sum(
         [1 for p, l in zip(predictions, labels) if p == l and p == 1]
     ) / sum(predictions)
-    recall = sum(
-        [1 for p, l in zip(predictions, labels) if p == l and p == 1]
-    ) / sum(labels)
+    recall = sum([1 for p, l in zip(predictions, labels) if p == l and p == 1]) / sum(
+        labels
+    )
     f1 = 2 * (precision * recall) / (precision + recall)
 
     print(
-        f"Accuracy: {accuracy}, F1: {f1}, Precision:"
-        f" {precision}, Recall: {recall}"
+        f"Accuracy: {accuracy}, F1: {f1}, Precision:" f" {precision}, Recall: {recall}"
     )

@@ -1,7 +1,9 @@
-"""Module for loading training configuration from a yaml file"""
+"""Module for loading training configuration from a yaml file."""
 
 import yaml
 from transformers import TrainingArguments
+
+
 def load_config(file_path) -> dict:
     """Load configuration from a yaml file."""
     with open(file_path, "r") as file:
@@ -23,9 +25,9 @@ def get_training_arguments(model_name, seed, dataset_name) -> TrainingArguments:
 
     # Modify the output_dir dynamically
     model_name_safe = model_name.replace("/", "_")
-    training_args[
-        "output_dir"
-    ] = f"./results/{model_name_safe}_seed_{seed}_{language_code}"
+    training_args["output_dir"] = (
+        f"./results/{model_name_safe}_seed_{seed}_{language_code}"
+    )
 
     return TrainingArguments(**training_args)
 

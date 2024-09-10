@@ -1,4 +1,5 @@
 """Module for predict function for labeled data."""
+
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from tokenization.normalize_DatasetDict_featues import rename_features
@@ -44,9 +45,7 @@ def test_predict() -> None:
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer_dataset)
 
     # Creating a DataLoader for batch processing
-    test_loader = DataLoader(
-        test_dataset, batch_size=16, collate_fn=data_collator
-    )
+    test_loader = DataLoader(test_dataset, batch_size=16, collate_fn=data_collator)
 
     # Initialize lists to store predictions and labels
     predictions = []
@@ -72,6 +71,4 @@ def test_predict() -> None:
     )
     acc = accuracy_score(labels, predictions)
 
-    print(
-        f"Accuracy: {acc}, F1: {f1}, Precision: {precision}, Recall: {recall}"
-    )
+    print(f"Accuracy: {acc}, F1: {f1}, Precision: {precision}, Recall: {recall}")

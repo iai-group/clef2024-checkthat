@@ -2,10 +2,13 @@
 
 This script trains the model for a single seed.
 """
+
 import numpy as np
 import torch
 import torch.cuda
 import wandb
+import yaml
+
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
@@ -20,6 +23,7 @@ from transformers import (
 
 
 def compute_metrics(p: EvalPrediction) -> dict:
+    """Compute metrics for evaluation."""
     preds = np.argmax(p.predictions, axis=1)
     labels = p.label_ids
     precision, recall, f1, _ = precision_recall_fscore_support(
@@ -29,20 +33,15 @@ def compute_metrics(p: EvalPrediction) -> dict:
     return {"accuracy": acc, "f1": f1, "precision": precision, "recall": recall}
 
 
-import yaml
-
-
 def load_config(file_path) -> dict:
+    """Load configuration from a yaml file."""
     with open(file_path, "r") as file:
         full_config = yaml.safe_load(file)
     if full_config is None or "parameters" not in full_config:
-        raise ValueError(
-            "Configuration file is empty or incorrectly formatted."
-        )
+        raise ValueError("Configuration file is empty or incorrectly formatted.")
     # Simplify the config structure for easier usage:
     simplified_config = {
-        key: value["values"][0]
-        for key, value in full_config["parameters"].items()
+        key: value["values"][0] for key, value in full_config["parameters"].items()
     }
     return simplified_config
 
@@ -56,18 +55,14 @@ def run_training(
     test_dataset=None,
 ) -> tuple:
 
-    config = load_config(
-        "checkthat/task1/training_config.yaml"
-    )
+    config = load_config("checkthat/task1/training_config.yaml")
 
     """Run training sweep.
 
     Evaluate on validation set and test set.
     """
     print("Starting to train..")
-    run_name = wandb.init(
-        project="wandb_yaml", entity="your_user", reinit=True
-    ).name
+    run_name = wandb.init(project="wandb_yaml", entity="your_user", reinit=True).name
 
     # Load model and tokenizer from Hugging Face
     hf_model = AutoModelForSequenceClassification.from_pretrained(
@@ -87,8 +82,8 @@ def run_training(
         do_train=True,
         do_eval=True,
         load_best_model_at_end=True,
-        metric_for_best_model="f1",  
-        greater_is_better=True, 
+        metric_for_best_model="f1",
+        greater_is_better=True,
         save_strategy="epoch",
         save_total_limit=1,
         report_to="wandb",
@@ -109,10 +104,10 @@ def run_training(
     trainer.train()
 
     # Save model and tokenizer at the end of training
-    model_path = (
-        f"{training_arguments.output_dir}/{run_name}_model_{dataset_language}"
+    model_path = f"{training_arguments.output_dir}/{run_name}_model_{dataset_language}"
+    tokenizer_path = (
+        f"{training_arguments.output_dir}/{run_name}_tokenizer_{dataset_language}"
     )
-    tokenizer_path = f"{training_arguments.output_dir}/{run_name}_tokenizer_{dataset_language}"
 
     hf_model.save_pretrained(model_path)
     hf_tokenizer.save_pretrained(tokenizer_path)
