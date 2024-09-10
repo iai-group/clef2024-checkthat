@@ -2,6 +2,7 @@ import argparse
 import csv
 from deep_translator import GoogleTranslate
 import sys
+import pandas as pd
 sys.path.append('.')
 
 def translate_tweets(data_fpath, source_language, target_language):
@@ -48,7 +49,7 @@ if __name__ == '__main__':
             "--file-path", "-f", required=True, type=str, 
             help="The absolute path to the data"
     )
-    parser.add_argument("
+    parser.add_argument(
             "--source_language", "-s", required=True, type=str, 
             help="Language of the source"
     )
