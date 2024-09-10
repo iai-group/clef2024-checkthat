@@ -1,7 +1,6 @@
-"""Will run script to run training and testing. (unlabeled tests yet to ble
-implemented)
+"""Currently, the script is only running training on labeled data.
 
-Argument parser is used to specify the model name and dataset name.
+Use inference scripts in the predict module.
 """
 import argparse
 
@@ -13,12 +12,12 @@ from transformers import AutoTokenizer
 
 
 def main() -> None:
-    # """Run training."""
+    """Run training."""
     label_map = {"Yes": 1, "No": 0}
 
     """Load dataset and tokenizer."""
     # Replace this with the path to your tokenizer
-    model_name = "roberta-large"  
+    model_name = "roberta-large"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     dataset_name = "iai-group/clef2024_checkthat_task1_en"
@@ -57,7 +56,7 @@ if __name__ == "__main__":
     # parser.add_argument(
     #     "--dataset",
     #     type=str,
-    #     default="iai-group/clef2024_checkthat_task1_en", 
+    #     default="iai-group/clef2024_checkthat_task1_en",
     #     help="Name of the dataset from Hugging Face",
     # )
 
