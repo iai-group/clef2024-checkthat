@@ -49,7 +49,7 @@ if __name__ == '__main__':
             help="The absolute path to the data"
     )
     parser.add_argument("
-            --source_language", "-s", required=True, type=str, 
+            "--source_language", "-s", required=True, type=str, 
             help="Language of the source"
     )
     parser.add_argument(
