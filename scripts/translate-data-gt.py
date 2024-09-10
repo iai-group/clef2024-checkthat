@@ -46,8 +46,8 @@ def translate_tweets(data_fpath, source_language, target_language):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-            "--file-path", "-f", required=True, type=str, 
-            help="The absolute path to the data"
+            "--file_path", "-f", required=True, type=str,
+            help="Path to the file containing the tweets"
     )
     parser.add_argument(
             "--source_language", "-s", required=True, type=str, 
