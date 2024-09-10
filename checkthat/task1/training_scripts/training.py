@@ -38,10 +38,13 @@ def load_config(file_path) -> dict:
     with open(file_path, "r") as file:
         full_config = yaml.safe_load(file)
     if full_config is None or "parameters" not in full_config:
-        raise ValueError("Configuration file is empty or incorrectly formatted.")
+        raise ValueError(
+            "Configuration file is empty or incorrectly formatted."
+        )
     # Simplify the config structure for easier usage:
     simplified_config = {
-        key: value["values"][0] for key, value in full_config["parameters"].items()
+        key: value["values"][0]
+        for key, value in full_config["parameters"].items()
     }
     return simplified_config
 
@@ -62,7 +65,9 @@ def run_training(
     Evaluate on validation set and test set.
     """
     print("Starting to train..")
-    run_name = wandb.init(project="wandb_yaml", entity="your_user", reinit=True).name
+    run_name = wandb.init(
+        project="wandb_yaml", entity="your_user", reinit=True
+    ).name
 
     # Load model and tokenizer from Hugging Face
     hf_model = AutoModelForSequenceClassification.from_pretrained(
@@ -104,10 +109,10 @@ def run_training(
     trainer.train()
 
     # Save model and tokenizer at the end of training
-    model_path = f"{training_arguments.output_dir}/{run_name}_model_{dataset_language}"
-    tokenizer_path = (
-        f"{training_arguments.output_dir}/{run_name}_tokenizer_{dataset_language}"
+    model_path = (
+        f"{training_arguments.output_dir}/{run_name}_model_{dataset_language}"
     )
+    tokenizer_path = f"{training_arguments.output_dir}/{run_name}_tokenizer_{dataset_language}"
 
     hf_model.save_pretrained(model_path)
     hf_tokenizer.save_pretrained(tokenizer_path)

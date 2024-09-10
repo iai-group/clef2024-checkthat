@@ -47,7 +47,9 @@ def translate_tweets(data_fpath, source_language, target_language):
                 )
             )
         else:
-            print("{}\t{}\t{}".format(line[id_head], line[url], translated_text))
+            print(
+                "{}\t{}\t{}".format(line[id_head], line[url], translated_text)
+            )
 
 
 if __name__ == "__main__":
