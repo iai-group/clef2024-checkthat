@@ -36,14 +36,12 @@ repos:
         entry: "mypy"
         language: python
         exclude: ^tests/
-        types: [python]
         verbose: true
         args: 
           - --no-strict-optional
           - --ignore-missing-imports
           - --no-incremental
           - --disable-error-code=override
-        additional_dependencies: [types-all]
 
 -   repo: local
     hooks:

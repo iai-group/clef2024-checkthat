@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Exclude .DS_Store files everywhere
+*.DS_Store
+
+# Exclude node_modules
+.vscode/
+tokenizer.json
